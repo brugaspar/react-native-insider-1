@@ -1,104 +1,74 @@
-import React from 'react';
-import { SafeAreaView, StyleSheet, FlatList } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, StyleSheet, FlatList, View, Text } from 'react-native';
+import * as Location from 'expo-location';
 
 import Menu from '../../components/Menu';
 import Header from '../../components/Header';
 import Conditions from '../../components/Conditions';
+import Forecast from '../../components/Forecast';
 
-const forecast = [
-  {
-    "date": "16/03",
-    "weekday": "Ter",
-    "max": 26,
-    "min": 18,
-    "description": "Tempestades",
-    "condition": "storm"
-  },
-  {
-    "date": "17/03",
-    "weekday": "Qua",
-    "max": 27,
-    "min": 18,
-    "description": "Tempestades",
-    "condition": "storm"
-  },
-  {
-    "date": "18/03",
-    "weekday": "Qui",
-    "max": 27,
-    "min": 18,
-    "description": "Tempestades",
-    "condition": "storm"
-  },
-  {
-    "date": "19/03",
-    "weekday": "Sex",
-    "max": 27,
-    "min": 18,
-    "description": "Parcialmente nublado",
-    "condition": "cloudly_day"
-  },
-  {
-    "date": "20/03",
-    "weekday": "Sáb",
-    "max": 26,
-    "min": 17,
-    "description": "Tempestades isoladas",
-    "condition": "storm"
-  },
-  {
-    "date": "21/03",
-    "weekday": "Dom",
-    "max": 27,
-    "min": 17,
-    "description": "Parcialmente nublado",
-    "condition": "cloudly_day"
-  },
-  {
-    "date": "22/03",
-    "weekday": "Seg",
-    "max": 26,
-    "min": 19,
-    "description": "Tempo nublado",
-    "condition": "cloud"
-  },
-  {
-    "date": "23/03",
-    "weekday": "Ter",
-    "max": 23,
-    "min": 19,
-    "description": "Tempestades",
-    "condition": "storm"
-  },
-  {
-    "date": "24/03",
-    "weekday": "Qua",
-    "max": 23,
-    "min": 18,
-    "description": "Tempestades isoladas",
-    "condition": "storm"
-  },
-  {
-    "date": "25/03",
-    "weekday": "Qui",
-    "max": 24,
-    "min": 17,
-    "description": "Parcialmente nublado",
-    "condition": "cloudly_day"
-  }
-];
+import api, { key } from '../../services/api';
 
 export default function Home() {
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [weatherData, setWeatherData] = useState([]);
+  const [icon, setIcon] = useState({ name: 'cloud', color: '#fff' });
+  const [background, setBackground] = useState(['#1ed6ff', '#97c1ff']);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestPermissionsAsync();
+
+      if (status !== 'granted') {
+        setErrorMessage('Permissão negada para acessar localização');
+        setLoading(false);
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+
+      const response = await api.get(`weather?key=${key}&lat=${location.coords.latitude}&lon=${location.coords.longitude}`);
+
+      setWeatherData(response.data);
+
+      if (response.data.results.currently === 'noite') setBackground(['#0c3741', '#0f2f61']);
+
+      switch (response.data.results.condition_slug) {
+        case 'clear_day':
+          setIcon({ name: 'partly-sunny', color: '#ffb300' });
+          break;
+        case 'rain':
+        case 'storm':
+          setIcon({ name: 'rainy', color: '#fff' });
+          break;
+        default:
+          break;
+      }
+
+      setLoading(false);
+    })();
+  }, []);
+
+  if (loading) return (
+    <View style={styles.container}>
+      <Text style={{ fontSize: 18, fontStyle: 'italic' }}>Carregando dados...</Text>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <Menu />
-      <Header />
-      <Conditions />
+      <Header background={background} weather={weatherData} icon={icon} />
+      <Conditions weather={weatherData} />
 
       <FlatList
+        horizontal
+        contentContainerStyle={{ paddingBottom: '5%', paddingRight: '5%' }}
         style={styles.list}
-        data={forecast}
+        data={weatherData.results.forecast}
         keyExtractor={item => item.date}
+        renderItem={({ item }) => <Forecast data={item} />}
       />
     </SafeAreaView>
   );

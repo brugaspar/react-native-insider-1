@@ -12,7 +12,7 @@ export default function Menu() {
       activeOpacity={0.8}
       onPress={() => navigation.openDrawer()}
     >
-      <Feather name="menu" size={36} color="#373737" />
+      <Feather name="menu" size={36} color="#fff" />
     </TouchableOpacity>
   );
 }
@@ -21,20 +21,20 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     zIndex: 9,
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
     width: 70,
     height: 70,
     justifyContent: 'center',
     alignItems: 'center',
-    left: 30,
-    top: 40,
+    left: 15,
+    top: 25,
     borderRadius: 35,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowOffset: {
-      width: 1,
-      height: 3
-    }
+    // elevation: 2,
+    // shadowColor: '#000',
+    // shadowOpacity: 0.2,
+    // shadowOffset: {
+    // width: 1,
+    // height: 3
+    // }
   }
 });

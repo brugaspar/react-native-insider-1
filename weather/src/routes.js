@@ -1,6 +1,6 @@
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { Dimensions } from 'react-native';
+// import { Dimensions } from 'react-native';
 
 import Home from './pages/Home';
 import Search from './pages/Search';
@@ -11,7 +11,7 @@ export default function Routes() {
   return (
     <Drawer.Navigator
       initialRouteName="Home"
-      edgeWidth={Dimensions.get('window').width / 2}
+    // edgeWidth={Dimensions.get('window').width / 2}
     >
       <Drawer.Screen
         name="Home"

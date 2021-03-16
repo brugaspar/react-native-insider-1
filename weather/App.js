@@ -12,6 +12,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-// https://api.hgbrasil.com/weather?key=5b511fe1
-// https://api.hgbrasil.com/weather?key=5b511fe1&lat=-23.682&lon=-46.875

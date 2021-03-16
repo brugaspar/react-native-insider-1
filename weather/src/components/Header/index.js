@@ -3,22 +3,22 @@ import { StyleSheet, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function Header() {
+export default function Header({ background, weather, icon }) {
   return (
     <LinearGradient
       style={styles.header}
-      colors={['#1ed6ff', '#97c1ff']}
+      colors={background}
     >
-      <Text style={styles.date}>16/03/2021</Text>
-      <Text style={styles.city}>Foz do Iguaçu</Text>
+      <Text style={styles.date}>{weather.results.date}</Text>
+      <Text style={styles.city}>{weather.results.city}</Text>
 
       <Ionicons
-        name="cloud"
-        color="#fff"
+        name={icon.name}
+        color={icon.color}
         size={150}
       />
 
-      <Text style={styles.weather}>30°</Text>
+      <Text style={styles.weather}>{weather.results.temp}°</Text>
     </LinearGradient>
   );
 }
